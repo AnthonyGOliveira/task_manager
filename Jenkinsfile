@@ -12,8 +12,9 @@ pipeline {
             steps {
                 script {
                     // Definir variáveis de ambiente
-                    def DOCKER_IMAGE = "task_manager_1.0.0"
+                    def DOCKER_IMAGE = "task_manager"
                     def GIT_BRANCH = env.GIT_BRANCH ?: 'latest'
+                    def DOCKER_IMAGE_VERSION = "1.0.0"
 
                     // Construir a imagem Docker usando o Dockerfile no diretório atual
                     sh "docker build -t ${DOCKER_IMAGE}:${GIT_BRANCH} ."
