@@ -17,6 +17,7 @@ onMounted(() => {
     selectedDate.value = new Date()
     currentDate.value = new Date()
     generateCalendar(selectedDate.value)
+    console.log('currentDay ', currentDay.value);
 })
 
 function getDaysInCurrentMonth(dateValue) {
@@ -168,7 +169,7 @@ const yearMonthDescription = computed(() => `${selectedYear.value} - ${selectedM
 
 <style scoped>
 .calendar-container {
-    background: #fff;
+    background: #202325;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     width: 345px;
     border-radius: 20px;
@@ -180,7 +181,7 @@ const yearMonthDescription = computed(() => `${selectedYear.value} - ${selectedM
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: #f0f0f0;
+    background: #202325;
 }
 
 .calendar {
@@ -198,12 +199,17 @@ const yearMonthDescription = computed(() => `${selectedYear.value} - ${selectedM
 
 }
 
+.calendar tbody,
+.calendar thead {
+    background-color: #181A1B;
+}
+
 .calendar-day {
     cursor: pointer;
 }
 
 .calendar-day-current {
-    background-color: rgb(136, 120, 143);
+    background-color: #202325;
 }
 
 .calendar-day-selected {
@@ -213,7 +219,7 @@ const yearMonthDescription = computed(() => `${selectedYear.value} - ${selectedM
 }
 
 .calendar-day:hover {
-    background: #e0e0e0;
+    background: #202325;
 }
 
 .calendar-button {
@@ -222,7 +228,7 @@ const yearMonthDescription = computed(() => `${selectedYear.value} - ${selectedM
     font-weight: bold;
     font-size: 30px;
     border: none;
-    background-color: #f0f0f0;
+    background-color: #202325;
     display: flex;
     justify-content: center;
     align-items: center;
