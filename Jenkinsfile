@@ -1,6 +1,11 @@
 pipeline {
     agent any
 
+    environment {
+        DOCKER_IMAGE = "task_manager"
+        APP_PORT = 80
+    }
+
     stages {
         stage('Checkout') {
             steps {
@@ -11,22 +16,17 @@ pipeline {
         stage('Build') {
             steps {
                 script {
-                    // Definir variáveis de ambiente
-                    def DOCKER_IMAGE = "task_manager_1.0.0"
-                    def GIT_BRANCH = env.GIT_BRANCH
-
-                    // Instalar plugin Docker Pipeline
-                    withCredentials([usernamePassword(credentialsId: 'docker-hub-cred', usernameVariable: 'DOCKER_HUB_USER', passwordVariable: 'DOCKER_HUB_PASSWORD')]) {
-                        sh 'docker plugin install docker-latest'
-                    }
+                    // Definir a tag da imagem Docker com base no branch
+                    def DOCKER_TAG = env.GIT_BRANCH ? env.GIT_BRANCH.replaceAll('/', '_') : 'latest'
 
                     // Construir a imagem Docker usando o Dockerfile no diretório atual
-                    docker.build(imageName: "${DOCKER_IMAGE}:${GIT_BRANCH}", context: '.')
+                    def image = docker.build("${DOCKER_IMAGE}:${DOCKER_TAG}")
 
                     // Fazer o push da imagem para o Docker Hub (opcional)
-                    // docker.withRegistry('https://index.docker.io', 'docker-hub-cred') {
-                    //     push "${DOCKER_IMAGE}:${GIT_BRANCH}"
-                    // }
+                    docker.withRegistry('https://index.docker.io/v1/', 'docker-hub-cred') {
+                        image.push("${DOCKER_TAG}")
+                        image.push("latest")
+                    }
                 }
             }
         }
@@ -34,13 +34,14 @@ pipeline {
         stage('Execute') {
             steps {
                 script {
-                    // Definir variável de ambiente para a porta da aplicação
-                    def APP_PORT = 80
-
                     // Executar a imagem Docker
-                    docker.run(image: "${DOCKER_IMAGE}:${env.GIT_BRANCH}", ports: [APP_PORT:"${APP_PORT}"])
+                    docker.image("${DOCKER_IMAGE}:${env.GIT_BRANCH.replaceAll('/', '_') ?: 'latest'}").run("-p ${APP_PORT}:${APP_PORT}")
                 }
             }
         }
+    }
+
+    triggers {
+        cron('H/5 * * * *')
     }
 }
