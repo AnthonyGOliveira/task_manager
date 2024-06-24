@@ -7,6 +7,18 @@ pipeline {
     }
 
     stages {
+        stage('Preparation') {
+            steps {
+                script {
+                    try {
+                        docker.version()
+                    } catch (Exception e) {
+                        error("Docker CLI not available: ${e.message}")
+                    }
+                }
+            }
+        }
+
         stage('Checkout') {
             steps {
                 checkout scm
