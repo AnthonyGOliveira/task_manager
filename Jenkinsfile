@@ -1,11 +1,6 @@
 pipeline {
     agent any
 
-    environment {
-        DOCKER_IMAGE = "task_manager"
-        APP_PORT = 80
-    }
-
     stages {
         stage('Checkout') {
             steps {
@@ -16,14 +11,12 @@ pipeline {
         stage('Build') {
             steps {
                 script {
-                    // Definir a tag da imagem Docker com base no branch
-                    def DOCKER_TAG = env.GIT_BRANCH ? env.GIT_BRANCH.replaceAll('/', '_') : 'latest'
+                    // Definir variáveis de ambiente
+                    def DOCKER_IMAGE = "task_manager_1.0.0"
+                    def GIT_BRANCH = env.GIT_BRANCH
 
                     // Construir a imagem Docker usando o Dockerfile no diretório atual
-                    def dockerImage = docker.build("${DOCKER_IMAGE}:${DOCKER_TAG}")
-
-                    // Fazer o push da imagem para o Docker Hub (opcional)
-                    dockerImage.push()
+                    sh "docker build -t ${DOCKER_IMAGE}:${GIT_BRANCH} ."
                 }
             }
         }
@@ -31,14 +24,14 @@ pipeline {
         stage('Execute') {
             steps {
                 script {
+                    // Definir variável de ambiente para a porta da aplicação
+                    def APP_PORT = 80
+                    def LOCAL_PORT = 8085
+
                     // Executar a imagem Docker
-                    docker.image("${DOCKER_IMAGE}:${env.GIT_BRANCH.replaceAll('/', '_') ?: 'latest'}").run("-p ${APP_PORT}:${APP_PORT}")
+                    sh "docker run -p ${LOCAL_PORT}:${APP_PORT} ${DOCKER_IMAGE}:${env.GIT_BRANCH}"
                 }
             }
         }
-    }
-
-    triggers {
-        cron('H/5 * * * *')
     }
 }
