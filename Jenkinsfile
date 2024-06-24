@@ -17,7 +17,7 @@ pipeline {
                     def DOCKER_IMAGE_VERSION = "1.0.0"
 
                     // Construir a imagem Docker usando o Dockerfile no diretório atual
-                    sh "docker build -t ${DOCKER_IMAGE}:${GIT_BRANCH} ."
+                    sh "docker build -t ${DOCKER_IMAGE}:${DOCKER_IMAGE_VERSION} ."
                 }
             }
         }
@@ -30,7 +30,7 @@ pipeline {
                     def LOCAL_PORT = 8085
 
                     // Executar a imagem Docker
-                    sh "docker run -p ${LOCAL_PORT}:${APP_PORT} ${DOCKER_IMAGE}:${GIT_BRANCH}"
+                    sh "docker run -p ${LOCAL_PORT}:${APP_PORT} ${DOCKER_IMAGE}:${DOCKER_IMAGE_VERSION}"
                 }
             }
         }
