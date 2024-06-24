@@ -7,18 +7,6 @@ pipeline {
     }
 
     stages {
-        stage('Preparation') {
-            steps {
-                script {
-                    try {
-                        docker.version()
-                    } catch (Exception e) {
-                        error("Docker CLI not available: ${e.message}")
-                    }
-                }
-            }
-        }
-
         stage('Checkout') {
             steps {
                 checkout scm
@@ -32,13 +20,10 @@ pipeline {
                     def DOCKER_TAG = env.GIT_BRANCH ? env.GIT_BRANCH.replaceAll('/', '_') : 'latest'
 
                     // Construir a imagem Docker usando o Dockerfile no diretório atual
-                    def image = docker.build("${DOCKER_IMAGE}:${DOCKER_TAG}")
+                    def dockerImage = docker.build("${DOCKER_IMAGE}:${DOCKER_TAG}")
 
                     // Fazer o push da imagem para o Docker Hub (opcional)
-                    docker.withRegistry('https://index.docker.io/v1/', 'docker-hub-cred') {
-                        image.push("${DOCKER_TAG}")
-                        image.push("latest")
-                    }
+                    dockerImage.push()
                 }
             }
         }
