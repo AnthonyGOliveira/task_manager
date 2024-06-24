@@ -29,7 +29,7 @@ pipeline {
             steps {
                 script {
                     // Executar a imagem Docker
-                    sh "docker run -p ${LOCAL_PORT}:${APP_PORT} ${DOCKER_IMAGE}:${DOCKER_IMAGE_VERSION}"
+                    sh "docker run -d -p ${LOCAL_PORT}:${APP_PORT} ${DOCKER_IMAGE}:${DOCKER_IMAGE_VERSION}"
                 }
             }
         }
