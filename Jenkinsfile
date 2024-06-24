@@ -13,7 +13,7 @@ pipeline {
                 script {
                     // Definir variáveis de ambiente
                     def DOCKER_IMAGE = "task_manager_1.0.0"
-                    def GIT_BRANCH = env.GIT_BRANCH
+                    def GIT_BRANCH = env.GIT_BRANCH ?: 'latest'
 
                     // Construir a imagem Docker usando o Dockerfile no diretório atual
                     sh "docker build -t ${DOCKER_IMAGE}:${GIT_BRANCH} ."
@@ -29,7 +29,7 @@ pipeline {
                     def LOCAL_PORT = 8085
 
                     // Executar a imagem Docker
-                    sh "docker run -p ${LOCAL_PORT}:${APP_PORT} ${DOCKER_IMAGE}:${env.GIT_BRANCH}"
+                    sh "docker run -p ${LOCAL_PORT}:${APP_PORT} ${DOCKER_IMAGE}:${GIT_BRANCH}"
                 }
             }
         }
