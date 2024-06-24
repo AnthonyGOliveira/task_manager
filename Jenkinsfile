@@ -14,10 +14,10 @@ pipeline {
             steps {
                 script {
                     // Remover containers da imagem antiga, se existirem
-                    sh "docker ps -a | grep ${DOCKER_IMAGE}:${DOCKER_IMAGE_VERSION} | awk '{print $1}' | xargs -r docker rm -f || true"
+                    sh "docker ps -a | grep '${DOCKER_IMAGE}:${DOCKER_IMAGE_VERSION}' | awk '{print \$1}' | xargs -r docker rm -f || true"
 
                     // Remover imagens anteriores com a mesma tag
-                    sh "docker images ${DOCKER_IMAGE}:${DOCKER_IMAGE_VERSION} | awk '{print $3}' | xargs -r docker rmi -f || true"
+                    sh "docker images '${DOCKER_IMAGE}:${DOCKER_IMAGE_VERSION}' | awk '{print \$3}' | xargs -r docker rmi -f || true"
                 }
             }
         }
